@@ -1,0 +1,65 @@
+--Q3(A) — Count books with sales > 1000, Sort desc, Limit top 3
+use("BookstoreDB");
+ 
+db.Books.insertMany([
+  { title: "Atomic Habits",          author: "James Clear",       genre: "Self-Help",  sales: 5000 },
+  { title: "Rich Dad Poor Dad",      author: "Robert Kiyosaki",   genre: "Finance",    sales: 4200 },
+  { title: "The Alchemist",          author: "Paulo Coelho",      genre: "Fiction",    sales: 3100 },
+  { title: "Ikigai",                 author: "Francesc Miralles", genre: "Self-Help",  sales: 800  },
+  { title: "Deep Work",              author: "Cal Newport",       genre: "Productivity",sales: 1500 },
+  { title: "Zero to One",            author: "Peter Thiel",       genre: "Business",   sales: 600  }
+]);
+ 
+--Count books with sales > 1000
+db.Books.countDocuments({ sales: { $gt: 1000 } });
+ 
+--Sort books by sales descending
+db.Books.find().sort({ sales: -1 });
+ 
+-- Limit top 3 books (highest sales)
+db.Books.find().sort({ sales: -1 }).limit(3);
+ 
+--Q3(B) — Posts where likes > 100 AND tag includes "tech"
+       -- AND comments count > 2
+
+use("BlogDB");
+ 
+db.Posts.insertMany([
+  {
+    title: "Top 10 AI Tools 2024",
+    tags: ["tech", "ai", "tools"],
+    likes: 250,
+    comments: ["Great!", "Very helpful", "Bookmarked"]
+  },
+  {
+    title: "How to Cook Pasta",
+    tags: ["food", "cooking"],
+    likes: 180,
+    comments: ["Yummy", "Trying this tonight"]
+  },
+  {
+    title: "MongoDB vs PostgreSQL",
+    tags: ["tech", "database"],
+    likes: 95,
+    comments: ["Interesting", "Good read", "Useful"]
+  },
+  {
+    title: "Python Tips & Tricks",
+    tags: ["tech", "python"],
+    likes: 320,
+    comments: ["Love it", "So helpful", "Sharing this", "Bookmarked"]
+  },
+  {
+    title: "React vs Vue in 2024",
+    tags: ["tech", "webdev"],
+    likes: 150,
+    comments: ["React wins"]
+  }
+]);
+ 
+db.Posts.find({
+  likes: { $gt: 100 },
+  tags: "tech",
+  $expr: { $gt: [{ $size: "$comments" }, 2] }
+});
+ 
